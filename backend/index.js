@@ -117,7 +117,32 @@ app.use('/api/pdf', pdfRoutes);
 
 // Serve static files from the React app
 const path = require('path');
-app.use(express.static(path.join(__dirname, '../frontend/school-frontend-app/build')));
+
+// Try to serve from the standard build directory
+const standardBuildPath = path.join(__dirname, '../frontend/school-frontend-app/build');
+const fallbackBuildPath = path.join(__dirname, '../public');
+
+// Check if the standard build directory exists
+const fs = require('fs');
+let buildPath = standardBuildPath;
+
+try {
+  if (fs.existsSync(path.join(standardBuildPath, 'index.html'))) {
+    console.log('Using standard build path:', standardBuildPath);
+    buildPath = standardBuildPath;
+  } else if (fs.existsSync(path.join(fallbackBuildPath, 'index.html'))) {
+    console.log('Using fallback build path:', fallbackBuildPath);
+    buildPath = fallbackBuildPath;
+  } else {
+    console.error('No valid build directory found!');
+    console.error('Standard path:', standardBuildPath);
+    console.error('Fallback path:', fallbackBuildPath);
+  }
+} catch (err) {
+  console.error('Error checking build directories:', err);
+}
+
+app.use(express.static(buildPath));
 
 // Error handling middleware for API routes
 app.use('/api', (err, req, res, next) => {
@@ -136,7 +161,16 @@ app.use('/api/*', (req, res) => {
 // The "catchall" handler: for any request that doesn't match an API route,
 // send back the React app's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/school-frontend-app/build/index.html'));
+  const indexPath = path.join(buildPath, 'index.html');
+  console.log('Attempting to serve index.html from:', indexPath);
+
+  // Check if the file exists before sending it
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    console.error('index.html not found at:', indexPath);
+    res.status(404).send('Frontend not found. Please check the deployment configuration.');
+  }
 });
 
 module.exports = app;
