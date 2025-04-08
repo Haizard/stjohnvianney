@@ -11,7 +11,9 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "install:all": "npm install && cd backend && npm install && cd ../frontend/school-frontend-app && npm install",
     "build": "cd frontend/school-frontend-app && npm run build",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix backend && npm install --prefix frontend/school-frontend-app && npm run build --prefix frontend/school-frontend-app"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix backend && npm install --prefix frontend/school-frontend-app && npm run build --prefix frontend/school-frontend-app",
+    "render-build": "bash ./build.sh",
+    "render-start": "bash ./start.sh"
   },
   "keywords": [
     "school",

@@ -2,11 +2,11 @@ services:
   # Backend API service
   - type: web
     name: st-john-vianey-api
-    env: node
+    runtime: node
     region: ohio
     plan: free
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    buildCommand: npm run render-build
+    startCommand: npm run render-start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
@@ -28,10 +28,14 @@ services:
   # Frontend static site
   - type: web
     name: st-john-vianey-frontend
-    env: static
+    runtime: static
     region: ohio
     buildCommand: cd frontend/school-frontend-app && npm install && npm run build
-    staticPublishPath: ./frontend/school-frontend-app/build
+    staticPublishPath: frontend/school-frontend-app/build
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
     routes:
       - type: rewrite
         source: /*

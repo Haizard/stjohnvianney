@@ -5,7 +5,8 @@ require('dotenv').config();
 const axios = require('axios');
 
 // Configuration
-const API_URL = 'http://localhost:5000';
+// Use environment variable for API URL if available, otherwise default to localhost
+const API_URL = process.env.API_URL || 'http://localhost:5000';
 const TEST_CREDENTIALS = [
   { emailOrUsername: 'admin2', password: 'admin123' },
   { emailOrUsername: 'admin', password: 'admin123' },
@@ -14,7 +15,7 @@ const TEST_CREDENTIALS = [
 
 async function testLogin(credentials) {
   console.log(`Testing login for user: ${credentials.emailOrUsername}`);
-  
+
   try {
     console.log('Sending request with data:', credentials);
     const response = await axios.post(`${API_URL}/api/users/login`, credentials, {
@@ -22,18 +23,18 @@ async function testLogin(credentials) {
         'Content-Type': 'application/json'
       }
     });
-    
+
     console.log('Login successful!');
     console.log('Status:', response.status);
     console.log('Response data:', JSON.stringify(response.data, null, 2));
-    
+
     return {
       success: true,
       data: response.data
     };
   } catch (error) {
     console.error('Login failed!');
-    
+
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
@@ -46,7 +47,7 @@ async function testLogin(credentials) {
       // Something happened in setting up the request that triggered an Error
       console.error('Error message:', error.message);
     }
-    
+
     return {
       success: false,
       error: error.response?.data || error.message
@@ -56,13 +57,13 @@ async function testLogin(credentials) {
 
 async function main() {
   console.log('Starting login tests with fixed API...');
-  
+
   for (const credentials of TEST_CREDENTIALS) {
     console.log('\n-----------------------------------');
     await testLogin(credentials);
     console.log('-----------------------------------\n');
   }
-  
+
   console.log('All login tests completed.');
 }
 
