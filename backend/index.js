@@ -115,18 +115,28 @@ app.use('/api/student-assignments', assignmentRoutes);
 app.use('/api/setup', setupRoutes);
 app.use('/api/pdf', pdfRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
+// Serve static files from the React app
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../frontend/school-frontend-app/build')));
+
+// Error handling middleware for API routes
+app.use('/api', (err, req, res, next) => {
+  console.error('API Error:', err);
   res.status(500).json({
     message: 'Something broke!',
     error: err.message
   });
 });
 
-// Handle 404 routes - Make sure this is last
-app.use((req, res) => {
-  res.status(404).json({ message: `Route ${req.path} not found` });
+// Handle 404 for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: `API Route ${req.path} not found` });
+});
+
+// The "catchall" handler: for any request that doesn't match an API route,
+// send back the React app's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/school-frontend-app/build/index.html'));
 });
 
 module.exports = app;

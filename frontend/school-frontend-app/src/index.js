@@ -20,8 +20,9 @@ if (token) {
 }
 
 // Configure axios base URL
-// Use environment variable in production, fallback to localhost in development
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+// Use environment variable in production, fallback to relative URL when deployed together, or localhost in development
+const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || (isLocalDevelopment ? 'http://localhost:5000' : '');
 
 // Create the root and render the app
 const rootElement = document.getElementById('root');
