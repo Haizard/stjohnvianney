@@ -1,0 +1,32 @@
+{
+  "name": "st-john-vianey-school-management",
+  "version": "1.0.0",
+  "description": "School Management System for St. John Vianey",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "cd frontend/school-frontend-app && npm start",
+    "client:build": "cd frontend/school-frontend-app && npm run build",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend/school-frontend-app && npm install",
+    "build": "cd frontend/school-frontend-app && npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix backend && npm install --prefix frontend/school-frontend-app && npm run build --prefix frontend/school-frontend-app"
+  },
+  "keywords": [
+    "school",
+    "management",
+    "education"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

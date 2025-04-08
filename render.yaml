@@ -1,0 +1,44 @@
+services:
+  # Backend API service
+  - type: web
+    name: st-john-vianey-api
+    env: node
+    region: ohio
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: CORS_ORIGIN
+        fromService:
+          name: st-john-vianey-frontend
+          type: web
+          property: url
+
+  # Frontend static site
+  - type: web
+    name: st-john-vianey-frontend
+    env: static
+    region: ohio
+    buildCommand: cd frontend/school-frontend-app && npm install && npm run build
+    staticPublishPath: ./frontend/school-frontend-app/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          name: st-john-vianey-api
+          type: web
+          property: url
